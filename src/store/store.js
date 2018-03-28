@@ -1,25 +1,8 @@
 const store = {
   "tempRegistrations": {},
-  "pipelineConfig": {
-    "modules": [
-      { "url": "https://id-generator.cloudapps.digital/generate", "method": "GET" },
-      { "url": "https://risk-engine.cloudapps.digital/calculate", "method": "POST" },
-      { "url": "https://registration-router.cloudapps.digital/newregistration", "method": "POST" },
-    ]
-  }
 };
 
 const randomlyFail = () => Math.random() > 1;
-
-const getPipelineConfigModules = () => {
-  return new Promise((resolve, reject) => {
-    if (randomlyFail()) {
-      reject(new Error(`Could not retrieve pipeline modules from store`));
-    } else {
-      resolve(store.pipelineConfig.modules);
-    }
-  });
-}
 
 const storeReg = (regObject) => {
   return new Promise((resolve, reject) => {
@@ -54,7 +37,6 @@ const deleteReg = (registrationId) => {
 }
 
 module.exports = {
-  getPipelineConfigModules,
   storeReg,
   retrieveReg,
   deleteReg

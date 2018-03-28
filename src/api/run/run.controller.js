@@ -6,16 +6,19 @@ module.exports = async (origPostBody) => {
   winston.info('run.controller called');
 
   try {
-    const pipelineModules = await store.getPipelineConfigModules();
+    // the POST body should contain a pipeline config that specifies how the pipeline will run
+    const pipelineConfig = origPostBody.pipelineConfig;
+
     let tempEnhancedReg = null;
 
-    for (let nextModule of pipelineModules) {
+    for (let nextModule of pipelineConfig.modules) {
       // if this is the first module in the pipeline, store the post body
       if (!tempEnhancedReg) {
         tempEnhancedReg = origPostBody;
       }
 
       try {
+        // run the next module in the pipeline, passing the latest version of the reg data
         const moduleResponse = await runModuleService.run(nextModule, tempEnhancedReg);
 
         // append new data from the module response to the temp stored reg,
