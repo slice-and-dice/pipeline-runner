@@ -1,9 +1,9 @@
-const { runModuleService } = require('../../services/');
-const store = require('../../store');
-const winston = require('winston');
+const { runModuleService } = require("../../services/");
+const store = require("../../store");
+const winston = require("winston");
 
-module.exports = async (origPostBody) => {
-  winston.info('run.controller called');
+module.exports = async origPostBody => {
+  winston.info("run.controller called");
 
   try {
     // the POST body should contain a pipeline config that specifies how the pipeline will run
@@ -19,15 +19,17 @@ module.exports = async (origPostBody) => {
 
       try {
         // run the next module in the pipeline, passing the latest version of the reg data
-        const moduleResponse = await runModuleService.run(nextModule, tempEnhancedReg);
+        const moduleResponse = await runModuleService.run(
+          nextModule,
+          tempEnhancedReg
+        );
 
         // append new data from the module response to the temp stored reg,
         // and update any existing data fields with the new module response version.
         for (let responseKey of Object.keys(moduleResponse)) {
           tempEnhancedReg[responseKey] = moduleResponse[responseKey];
         }
-      }
-      catch (err) {
+      } catch (err) {
         winston.error(`run.controller error: ${err}`);
       }
 
@@ -41,10 +43,9 @@ module.exports = async (origPostBody) => {
         store.deleteReg(tempEnhancedReg.registrationId);
       }
     }
-    winston.info('run.controller successful');
-    return 'Pipeline ran';
-  }
-  catch (err) {
+    winston.info("run.controller successful");
+    return tempEnhancedReg;
+  } catch (err) {
     winston.error(`run.controller error: ${err}`);
     return err;
   }
